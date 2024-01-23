@@ -29,8 +29,8 @@ func (p *Parser) nextToken() {
 func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
-	for p.curToken != token.EOF {
-		stmt = p.parseStatement()
+	for p.curToken.Type != token.EOF {
+		stmt := p.parseStatement()
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
 		}
@@ -39,7 +39,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 	return program
 }
 
-func (p *Parser) parseStatement() *ast.Statement {
+func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
@@ -50,29 +50,29 @@ func (p *Parser) parseStatement() *ast.Statement {
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt := &ast.LetStatement{Token: p.curToken}
-    if !p.expectPeek(token.IDENT) {
-        return nil
-    }
-    stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-    
-    for !p.curTokenIs(token.SEMICOLON) {
-       p.nextToken() 
-    }
-    
-    return stmt
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
+	for !p.curTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
 }
 
 func (p *Parser) expectPeek(t token.TokenType) bool {
-    if p.peekTokenIs(t) {
-        p.nextToken()
-        return true
-    }
-    return false
+	if p.peekTokenIs(t) {
+		p.nextToken()
+		return true
+	}
+	return false
 }
 
 func (p *Parser) peekTokenIs(t token.TokenType) bool {
-    return p.peekToken.Type == t
+	return p.peekToken.Type == t
 }
 func (p *Parser) curTokenIs(t token.TokenType) bool {
-    return p.curToken.Type == t
+	return p.curToken.Type == t
 }
