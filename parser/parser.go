@@ -98,17 +98,17 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	if !p.expectPeek(token.IDENT) {
 		return nil
 	}
-    
+
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-    
-    if !p.expectPeek(token.ASSIGN)  {
-        return nil
-    }
-    
-    p.nextToken()
-    
-    stmt.Value = p.parseExpression(LOWEST)
-    
+
+	if !p.expectPeek(token.ASSIGN) {
+		return nil
+	}
+
+	p.nextToken()
+
+	stmt.Value = p.parseExpression(LOWEST)
+
 	if p.peekTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
@@ -119,9 +119,9 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 	p.nextToken()
-    
-    stmt.ReturnValue = p.parseExpression(LOWEST)
-    
+
+	stmt.ReturnValue = p.parseExpression(LOWEST)
+
 	for !p.curTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
@@ -158,7 +158,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 		p.nextToken()
 		leftExp = infix(leftExp)
 	}
-    
+
 	return leftExp
 }
 
@@ -182,7 +182,7 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
-    token.LPAREN: CALL, 
+	token.LPAREN:   CALL,
 }
 
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
@@ -256,34 +256,34 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 }
 
 func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
-    exp := &ast.CallExpression{Token: p.curToken, Function: function}
-    exp.Arguments = p.parseCallArguments()
-    return exp
+	exp := &ast.CallExpression{Token: p.curToken, Function: function}
+	exp.Arguments = p.parseCallArguments()
+	return exp
 }
 
 func (p *Parser) parseCallArguments() []ast.Expression {
-    args := []ast.Expression {}
-    if p.peekTokenIs(token.RPAREN) {
-        p.nextToken()
-        return args
-    }
+	args := []ast.Expression{}
+	if p.peekTokenIs(token.RPAREN) {
+		p.nextToken()
+		return args
+	}
 
-    p.nextToken()
-    args = append(args, p.parseExpression(LOWEST))
+	p.nextToken()
+	args = append(args, p.parseExpression(LOWEST))
 
-    for p.peekTokenIs(token.COMMA) {
-        p.nextToken()
-        p.nextToken()
-        args = append(args, p.parseExpression(LOWEST))
-    }
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		args = append(args, p.parseExpression(LOWEST))
+	}
 
-    if !p.expectPeek(token.RPAREN) {
-        return nil
-    }
-    return args
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	return args
 }
 
-//HELPER METHODS
+// HELPER METHODS
 func (p *Parser) peekPrecedence() int {
 	if p, ok := precedences[p.peekToken.Type]; ok {
 		return p
