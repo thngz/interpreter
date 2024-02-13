@@ -32,7 +32,9 @@ const (
 	RPAREN = ")"
 	LBRACE = "{"
 	RBRACE = "}"
-
+    LBRACKET = "["
+    RBRACKET = "]"
+    
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
@@ -41,6 +43,9 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
+
+    // Types
+    STRING = "STRING"
 )
 
 type Token struct {
